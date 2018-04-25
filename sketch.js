@@ -17,6 +17,7 @@ function draw() {
   noFill();
   line(0,495,width,495);
   stage.drawboulder();
+  stage.drawtree();
   fill(255);
   sphere.drawball();
   for(let i=0; i<7; i++){
@@ -149,10 +150,17 @@ class Background{
     push();
     beginShape();
     curveVertex(550,495);
-    curveVertex(600,495);
-    curveVertex(610,455);
-    curveVertex(620,400);
-    curveVertex(625,375);
+    curveVertex(590,495);
+    curveVertex(610,475);
+    curveVertex(620,450);
+    curveVertex(625,400);
+    endShape();
+    beginShape();
+    curveVertex(750,495);
+    curveVertex(710,495);
+    curveVertex(690,475);
+    curveVertex(680,450);
+    curveVertex(675,400);
     endShape();
     pop();
   }
