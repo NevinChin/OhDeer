@@ -12,7 +12,7 @@ function setup() {
 
 function draw() {
   // put drawing code here
-  background(255);
+  background(0,0,255);
   strokeWeight(5);
   noFill();
   line(0,495,width,495);
