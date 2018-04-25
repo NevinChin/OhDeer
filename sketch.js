@@ -131,13 +131,37 @@ class Background{
   }
 
   drawboulder(){
+    push();
     arc(this.x,495,300,500,PI,0,OPEN);
-    arc(this.x+225,495,150,750,PI,0,OPEN);
+    for(let i=0; i<=5; i++){
+    arc(this.x-75,295,30,30,0,PI,OPEN);
+    translate(30,0);
+  }
+    arc(this.x+45,495,150,750,PI,0,OPEN);
+    for(let i=0; i<=2; i++){
+    arc(this.x+15,200,30,30,0,PI,OPEN);
+    translate(30,0);
+  }
+    pop();
+  }
+
+  drawtree(){
+    push();
+    beginShape();
+    curveVertex(550,495);
+    curveVertex(600,495);
+    curveVertex(610,455);
+    curveVertex(620,400);
+    curveVertex(625,375);
+    endShape();
+    pop();
   }
 
   moveforward(){
     if (keyIsDown(RIGHT_ARROW)){
       this.x = this.x-this.speed;
     }
+  if (keyIsDown(LEFT_ARROW)){
+    this.x = this.x+this.speed;
   }
 }
