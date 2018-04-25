@@ -165,3 +165,4 @@ class Background{
     this.x = this.x+this.speed;
   }
 }
+}
