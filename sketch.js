@@ -1,5 +1,6 @@
 let bump;
 let sphere;
+let chase;
 let stage = [];
 let flakes = [];
 
@@ -8,6 +9,8 @@ function setup() {
   createCanvas(1450,756);
   bump = new floor(150,100,75,50,2.5);
   sphere = new ball(100,450,5);
+  chase = new Deer(2000,400,3);
+  frameRate(240);
 }
 
 function draw() {
@@ -34,6 +37,8 @@ function draw() {
     }
   pop();
   fill(255);
+  chase.drawDeer();
+  chase.runDeer();
   sphere.drawball();
   push();
   if (frameCount % 8 == 0) {
@@ -61,6 +66,7 @@ bump.switchback();
 sphere.bounce();
 sphere.boing();
 sphere.boop();
+chase.catchDeer();
 }
 
 class floor{
@@ -322,4 +328,47 @@ class Background{
   		this.x = this.x+.5;
   		this.y = this.y+this.speed;
   	}
+  }
+
+  class Deer {
+
+    constructor(x,y,speed){
+     this.x = x;
+        this.y = y;
+          this.speed = speed;
+    }
+
+    drawDeer(){
+      push();
+      fill(255);
+      rect(this.x,this.y,125,75);
+      noFill();
+      strokeWeight(3);
+      textSize(30);
+      text('Deer',this.x+25,this.y+40);
+      pop();
+    }
+
+    runDeer(){
+      if (keyIsDown(RIGHT_ARROW)){
+        if (this.x <= 1000);
+          if (keyIsDown(SHIFT)){
+            this.x = this.x - 2*this.speed;
+          }
+        else{
+          this.x = this.x - this.speed;
+        }
+      }
+    }
+
+    catchDeer(){
+      if (this.x <= sphere.x){
+        background(0);
+        fill(255);
+        stroke(255);
+        textSize(100);
+        text('YOU WIN', 500, 100);
+      }
+    }
+
   }
