@@ -1,6 +1,7 @@
 let bump;
 let sphere;
 let chase;
+let block;
 let stage = [];
 let flakes = [];
 
@@ -10,6 +11,7 @@ function setup() {
   bump = new floor(150,100,75,50,2.5);
   sphere = new ball(100,450,5);
   chase = new Deer(2000,400,3);
+  block = new Obstacle(500,495,10);
   frameRate(240);
 }
 
@@ -22,7 +24,7 @@ function draw() {
   strokeWeight(5);
   noFill();
   push();
-
+  block.drawStump();
   if (keyIsDown(RIGHT_ARROW)){
     if (frameCount % 250 == 0) {
       let b = new Background(1600,100,10,0.75,1);
@@ -369,6 +371,50 @@ class Background{
         textSize(100);
         text('YOU WIN', 500, 100);
       }
+    }
+
+  }
+
+  class Obstacle {
+
+    constructor(x,y,speed){
+      this.x = x;
+        this.y = y;
+          this.speed = speed;
+    }
+
+    drawStump(){
+      push();
+      fill(125,95,50);
+      noStroke();
+      triangle(this.x+40,this.y,this.x+60,this.y,this.x+75,this.y-50);
+      triangle(this.x+160,this.y,this.x+140,this.y,this.x+128,this.y-50);
+      quad(this.x+60,this.y,this.x+140,this.y,this.x+140,this.y-50,this.x+60,this.y-50);
+      stroke(0);
+      fill(205,185,144);
+      ellipse(this.x+100,this.y-50,80,30);
+      noFill();
+      beginShape();
+      curveVertex(this.x,this.y);
+      curveVertex(this.x+40,this.y);
+      curveVertex(this.x+55,this.y-20);
+      curveVertex(this.x+60,this.y-50);
+      curveVertex(this.x+70,this.y-115);
+      endShape();
+      beginShape();
+      curveVertex(this.x+200,this.y);
+      curveVertex(this.x+160,this.y);
+      curveVertex(this.x+145,this.y-20);
+      curveVertex(this.x+140,this.y-50);
+      curveVertex(this.x+125,this.y-115);
+      endShape();
+      pop();
+    }
+
+    drawPile(){
+      push();
+      arc(this.x,this.y,)
+      pop();
     }
 
   }
