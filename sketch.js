@@ -1,24 +1,62 @@
 let bump;
 let sphere;
-let stage;
+let chase;
+let block;
+let stage = [];
+let flakes = [];
 
 function setup() {
   // put setup code here
-  createCanvas(1425,700);
+  createCanvas(1450,756);
   bump = new floor(150,100,75,50,2.5);
   sphere = new ball(100,450,5);
-  stage = new Background(1800,100,10);
+  chase = new Deer(2000,400,3);
+  block = new Obstacle(500,495,10);
+  frameRate(240);
 }
 
 function draw() {
   // put drawing code here
-  background(255);
+  background(189,251,255);
+  console.log(frameCount);
+  noStroke();
+  stroke(0);
   strokeWeight(5);
   noFill();
-  line(0,495,width,495);
-  stage.drawboulder();
+  push();
+  block.drawStump();
+  if (keyIsDown(RIGHT_ARROW)){
+    if (frameCount % 250 == 0) {
+      let b = new Background(1600,100,10,0.75,1);
+      stage.push(b);
+      console.log(stage);
+      }
+    }
+    for (let i = 0; i < stage.length; i++) {
+          stage[i].drawboulder();
+          stage[i].drawtree();
+          stage[i].moveforward();
+    }
+  pop();
   fill(255);
+  chase.drawDeer();
+  chase.runDeer();
   sphere.drawball();
+  push();
+  if (frameCount % 8 == 0) {
+      let s = new Snow(random(0,width),0,3);
+      flakes.push(s);
+      console.log(flakes);
+    }
+    for (let i = 0; i < flakes.length; i++) {
+  	 	      flakes[i].drawFlake();
+         	  flakes[i].moveFlake();
+  	  }
+  pop();
+  fill(130,120,90);
+  rect(0,495,width,height);
+  fill(255);
+  rect(0,495,width,45);
   for(let i=0; i<7; i++){
   bump.drawfloor();
   translate(225,0);
@@ -30,7 +68,7 @@ bump.switchback();
 sphere.bounce();
 sphere.boing();
 sphere.boop();
-stage.moveforward();
+chase.catchDeer();
 }
 
 class floor{
@@ -104,6 +142,9 @@ class ball{
     if (keyIsDown(RIGHT_ARROW)){
       this.y = this.y+this.speed;
     }
+    if (keyIsDown(LEFT_ARROW)){
+      this.y = this.y+this.speed;
+    }
   }
 
   boing(){
@@ -124,20 +165,256 @@ class ball{
 
 class Background{
 
-  constructor (x,y,speed){
+  constructor (x,y,speed,scale,shift){
     this.x = x;
     this.y = y;
     this.speed = speed;
+    this.scale = scale;
+    this.shift = shift;
   }
 
   drawboulder(){
-    arc(this.x,495,300,500,PI,0,OPEN);
-    arc(this.x+225,495,150,750,PI,0,OPEN);
+    push();
+    fill(180,205,255);
+    arc(this.x+600,493,300,500,PI,0,OPEN);
+    fill(255);
+    for(let i=0; i<=5; i++){
+    arc(this.x+500,300,40,35,0,PI,OPEN);
+    translate(40,0);
+  }
+    arc(this.x+360,300,240,115,PI,0,OPEN);
+    pop();
+  }
+
+  drawtree(){
+    fill(200,150,230);
+    ellipse(this.x+145,325,75,60);
+    ellipse(this.x+185,305,75,60);
+    noStroke();
+    fill(205,185,144);
+    quad(this.x+52,493,this.x+70,493,this.x+100,350,this.x+95,350);
+    quad(this.x+148,493,this.x+130,493,this.x+100,350,this.x+105,350);
+    triangle(this.x+60,493,this.x+100,350,this.x+140,493); //bottom trunk fill
+    quad(this.x-100,345,this.x-100,325,this.x,380,this.x,403);
+    quad(this.x,380,this.x,403,this.x+60,382,this.x+40,379); //left branch fill
+    quad(this.x,350,this.x+25,340,this.x+60,370,this.x+20,370);
+    quad(this.x+60,382,this.x+20,379,this.x+50,353,this.x+70,360); //second left branch fill
+    quad(this.x+60,382,this.x+80,395,this.x+90,350,this.x+70,360);
+    triangle(this.x+70,420,this.x+100,410,this.x+85,320);
+    quad(this.x+75,325,this.x+95,328,this.x+120,380,this.x+130,455); //top trunk fill
+    quad(this.x+100,345,this.x+105,330,this.x+115,345,this.x+116,370); //second right branch fill
+    quad(this.x+110,355,this.x+115,380,this.x+190,390,this.x+210,374);
+    quad(this.x+210,374,this.x+182,372,this.x+231,280,this.x+265,265); //right branch fill
+    stroke(0);
+    noFill();
+    beginShape();
+    curveVertex(this.x,495);
+    curveVertex(this.x+40,495);
+    curveVertex(this.x+60,475);
+    curveVertex(this.x+75,400);
+    curveVertex(this.x+80,380);
+    endShape();
+    beginShape();
+    curveVertex(this.x+200,495);
+    curveVertex(this.x+160,495);
+    curveVertex(this.x+140,475);
+    curveVertex(this.x+120,380);
+    curveVertex(this.x+115,340);
+    endShape(); //Base of trunk
+    beginShape();
+    curveVertex(this.x+85,380);
+    curveVertex(this.x+75,400);
+    curveVertex(this.x+60,380);
+    curveVertex(this.x,400);
+    curveVertex(this.x-100,345);
+    curveVertex(this.x-120,325);
+    endShape();
+    beginShape();
+    curveVertex(this.x+85,360);
+    curveVertex(this.x+40,370);
+    curveVertex(this.x,380);
+    curveVertex(this.x-100,325);
+    curveVertex(this.x-120,305);
+    endShape(); //Far left branch
+    beginShape();
+    curveVertex(this.x+42,380);
+    curveVertex(this.x+40,370);
+    curveVertex(this.x+15,365);
+    curveVertex(this.x,350);
+    curveVertex(this.x+5,355);
+    endShape();
+    beginShape();
+    curveVertex(this.x+77,365);
+    curveVertex(this.x+80,358);
+    curveVertex(this.x+68,360);
+    curveVertex(this.x+55,356);
+    curveVertex(this.x+35,353);
+    curveVertex(this.x+25,340);
+    curveVertex(this.x+25,345);
+    endShape(); //Second from left branch
+    beginShape();
+    curveVertex(this.x+80,360);
+    curveVertex(this.x+80,358);
+    curveVertex(this.x+82,345);
+    curveVertex(this.x+75,325);
+    curveVertex(this.x+90,320);
+    endShape();
+    beginShape();
+    curveVertex(this.x+90,318);
+    curveVertex(this.x+95,328);
+    curveVertex(this.x+100,343);
+    curveVertex(this.x+106,332);
+    curveVertex(this.x+110,330);
+    endShape()
+    beginShape();
+    curveVertex(this.x+115,360);
+    curveVertex(this.x+115,355);
+    curveVertex(this.x+116,345);
+    curveVertex(this.x+105,320);
+    endShape(); //Top part of trunk
+    beginShape();
+    curveVertex(this.x+115,390);
+    curveVertex(this.x+120,380);
+    curveVertex(this.x+200,385);
+    curveVertex(this.x+245,300);
+    curveVertex(this.x+275,270);
+    curveVertex(this.x+300,245);
+    endShape();
+    beginShape();
+    curveVertex(this.x+115,360);
+    curveVertex(this.x+115,355);
+    curveVertex(this.x+130,360);
+    curveVertex(this.x+185,365);
+    curveVertex(this.x+220,295);
+    curveVertex(this.x+220,330);
+    endShape(); //Right branch
+    fill(221,151,229);
+    ellipse(this.x+15,310,100,85); //Bottom left poof
+    fill(235,160,240);
+    ellipse(this.x+300,150,175,150); //Far right poof
+    fill(235,190,240);
+    ellipse(this.x+100,175,400,300); //Main poof
+    fill(230,195,250);
+    ellipse(this.x+250,225,125,115); //Second from right poof
+    fill(235,200,240);
+    ellipse(this.x-75,250,250,200); //Far left poof
+    ellipse(this.x-10,170,145,125); //Second from left poof
   }
 
   moveforward(){
     if (keyIsDown(RIGHT_ARROW)){
       this.x = this.x-this.speed;
+      this.shift=this.shift/10;
     }
+  if (keyIsDown(LEFT_ARROW)){
+    this.x = this.x+this.speed;
   }
 }
+}
+
+  class Snow {
+
+  	constructor(x,y,speed){
+  		this.x = x;
+      		this.y = y;
+          	this.speed = speed;
+  	}
+
+  	drawFlake(){
+    noStroke();
+    fill(255);
+  	ellipse(this.x,this.y,15,15);
+  	}
+
+  	moveFlake(){
+  		this.x = this.x+.5;
+  		this.y = this.y+this.speed;
+  	}
+  }
+
+  class Deer {
+
+    constructor(x,y,speed){
+     this.x = x;
+        this.y = y;
+          this.speed = speed;
+    }
+
+    drawDeer(){
+      push();
+      fill(255);
+      rect(this.x,this.y,125,75);
+      noFill();
+      strokeWeight(3);
+      textSize(30);
+      text('Deer',this.x+25,this.y+40);
+      pop();
+    }
+
+    runDeer(){
+      if (keyIsDown(RIGHT_ARROW)){
+        if (this.x <= 1000);
+          if (keyIsDown(SHIFT)){
+            this.x = this.x - 2*this.speed;
+          }
+        else{
+          this.x = this.x - this.speed;
+        }
+      }
+    }
+
+    catchDeer(){
+      if (this.x <= sphere.x){
+        background(0);
+        fill(255);
+        stroke(255);
+        textSize(100);
+        text('YOU WIN', 500, 100);
+      }
+    }
+
+  }
+
+  class Obstacle {
+
+    constructor(x,y,speed){
+      this.x = x;
+        this.y = y;
+          this.speed = speed;
+    }
+
+    drawStump(){
+      push();
+      fill(125,95,50);
+      noStroke();
+      triangle(this.x+40,this.y,this.x+60,this.y,this.x+75,this.y-50);
+      triangle(this.x+160,this.y,this.x+140,this.y,this.x+128,this.y-50);
+      quad(this.x+60,this.y,this.x+140,this.y,this.x+140,this.y-50,this.x+60,this.y-50);
+      stroke(0);
+      fill(205,185,144);
+      ellipse(this.x+100,this.y-50,80,30);
+      noFill();
+      beginShape();
+      curveVertex(this.x,this.y);
+      curveVertex(this.x+40,this.y);
+      curveVertex(this.x+55,this.y-20);
+      curveVertex(this.x+60,this.y-50);
+      curveVertex(this.x+70,this.y-115);
+      endShape();
+      beginShape();
+      curveVertex(this.x+200,this.y);
+      curveVertex(this.x+160,this.y);
+      curveVertex(this.x+145,this.y-20);
+      curveVertex(this.x+140,this.y-50);
+      curveVertex(this.x+125,this.y-115);
+      endShape();
+      pop();
+    }
+
+    drawPile(){
+      push();
+      arc(this.x,this.y,)
+      pop();
+    }
+
+  }
