@@ -15,11 +15,11 @@ function preload() {
 
 function setup() {
   createCanvas(1450,756);
-  ground = 280;
+  ground = 420
   bump = new floor(150,100,75,50,2.5);
   sphere = new ball(100,450,5);
   chase = new Deer(2000,400,3);
-  block = new Obstacle(500,495,10);
+  block = new Obstacle(500,495,5);
   frameRate(240);
   fill(0);
   character = new Corgi(0, height-70, 10);
@@ -37,11 +37,11 @@ function draw() {
   background(189,251,255);
 
 //-character.pos.x makes the background move and the character stay in the same position
-  translate(-character.pos.x+50, 0); //changes the origin point of the screen (helpful for moving games)
+  // translate(-character.pos.x+50, 0); //changes the origin point of the screen (helpful for moving games)
 //  using a keyPressed function, you can implement different ways for the character to move
 
 //create obstacle for character to jump over
-obstacles(150, 20);
+// obstacles(150, 20);
 let gravity = createVector(0, 0.3);
 
 console.log(frameCount);
@@ -51,6 +51,7 @@ console.log(frameCount);
   noFill();
   push();
   block.drawStump();
+  block.ApproachingObstacle();
   if (keyIsDown(RIGHT_ARROW)){
     if (frameCount % 250 == 0) {
       let b = new Background(1600,100,10,0.75,1);
@@ -107,7 +108,7 @@ chase.catchDeer();
 
 function Corgi(x, y) {
   this.pos = createVector(x, y);
-  this.vel = createVector(1, 0);
+  this.vel = createVector(0, 0);
   this.acc = createVector(0, 0);
 
   this.applyForce = function(force) {
@@ -148,13 +149,13 @@ function Corgi(x, y) {
 
 
 
-function obstacles(obstacleWidth, obstacleHeight) {
-  //https://www.youtube.com/watch?v=cXgA1d_E-jY
-  fill(80);
-  rect(540, 260, obstacleWidth, obstacleHeight);
-  rect(720, 150, obstacleWidth, obstacleHeight);
-  rect(900, 300, obstacleWidth, obstacleHeight);
-}
+// function obstacles(obstacleWidth, obstacleHeight) {
+//   //https://www.youtube.com/watch?v=cXgA1d_E-jY
+//   fill(80);
+//   rect(540, 260, obstacleWidth, obstacleHeight);
+//   rect(720, 150, obstacleWidth, obstacleHeight);
+//   rect(900, 300, obstacleWidth, obstacleHeight);
+// }
 
 class floor{
 
@@ -502,5 +503,12 @@ class Background{
       pop();
     }
 
+    ApproachingObstacle(){
+      if (keyIsDown(RIGHT_ARROW)){
+        this.x = this.x-this.speed;
+      }
+    if (keyIsDown(LEFT_ARROW)){
+      this.x = this.x+this.speed;
+    }
   }
-
+    }
