@@ -14,12 +14,12 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1450,756);
+  createCanvas(1450,750);
   ground = 420
   bump = new floor(150,100,75,50,2.5);
   sphere = new ball(100,450,5);
   chase = new Deer(2000,400,3);
-  block = new Obstacle(500,495,5);
+  block = new Obstacle(1000,495,5);
   frameRate(240);
   fill(0);
   character = new Corgi(0, height-70, 10);
@@ -43,7 +43,6 @@ function draw() {
 //create obstacle for character to jump over
 // obstacles(150, 20);
 let gravity = createVector(0, 0.3);
-
 console.log(frameCount);
   noStroke();
   stroke(0);
