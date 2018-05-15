@@ -14,8 +14,8 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1450,756);
-  ground = 280;
+  createCanvas(1100,700);
+  ground = 420;
   bump = new floor(150,100,75,50,2.5);
   sphere = new ball(100,450,5);
   chase = new Deer(2000,400,3);
@@ -23,6 +23,7 @@ function setup() {
   frameRate(240);
   fill(0);
   character = new Corgi(0, height-70, 10);
+  obstacle = new Obstacle();
 }
 
 function keyPressed() {
@@ -35,14 +36,7 @@ function keyPressed() {
 function draw() {
   //creates character on screen
   background(189,251,255);
-
-//-character.pos.x makes the background move and the character stay in the same position
-  translate(-character.pos.x+50, 0); //changes the origin point of the screen (helpful for moving games)
-//  using a keyPressed function, you can implement different ways for the character to move
-
-//create obstacle for character to jump over
-obstacles(150, 20);
-let gravity = createVector(0, 0.3);
+let gravity = createVector(0, 0.4);
 
 console.log(frameCount);
   noStroke();
@@ -50,7 +44,6 @@ console.log(frameCount);
   strokeWeight(5);
   noFill();
   push();
-  block.drawStump();
   if (keyIsDown(RIGHT_ARROW)){
     if (frameCount % 250 == 0) {
       let b = new Background(1600,100,10,0.75,1);
@@ -61,6 +54,7 @@ console.log(frameCount);
     for (let i = 0; i < stage.length; i++) {
           stage[i].drawboulder();
           stage[i].drawtree();
+          stage[i].drawStump();
           stage[i].moveforward();
     }
   pop();
@@ -69,8 +63,9 @@ console.log(frameCount);
   chase.runDeer();
   character.applyForce(gravity);
   character.update();
-  character.edges();
   character.display();
+  character.edges();
+  obstacle.edges();
   push();
   if (frameCount % 8 == 0) {
       let s = new Snow(random(0,width),0,3);
@@ -107,7 +102,7 @@ chase.catchDeer();
 
 function Corgi(x, y) {
   this.pos = createVector(x, y);
-  this.vel = createVector(1, 0);
+  this.vel = createVector(0, 0);
   this.acc = createVector(0, 0);
 
   this.applyForce = function(force) {
@@ -130,31 +125,42 @@ function Corgi(x, y) {
     if (this.pos.y > ground) {
       this.vel.y *= 0;
       this.pos.y = ground;
-    }
-     if (this.pos.x >= 500 && this.pos.x <= 660) {
-      ground = 180;
-    }
-   if (this.pos.x >= 680 && this.pos.x <= 840) {
-     ground = 70;
-   }
-   if (this.pos.x >= 860 && this.pos.x <= 1020) {
-    ground = 220;
-  }
-  else if (this.pos.x > 1020) {
-    ground = 280;
-  }
-  }
+       }
+     }
+
    }
 
+   function Obstacle(x, y) {
+     this.pos = createVector(x, y);
+     this.vel = createVector(0, 0);
+     this.acc = createVector(0, 0);
 
+     this.applyForce = function(force) {
+       this.acc.add(force);
+     }
 
-function obstacles(obstacleWidth, obstacleHeight) {
-  //https://www.youtube.com/watch?v=cXgA1d_E-jY
-  fill(80);
-  rect(540, 260, obstacleWidth, obstacleHeight);
-  rect(720, 150, obstacleWidth, obstacleHeight);
-  rect(900, 300, obstacleWidth, obstacleHeight);
-}
+     this.update = function() {
+       this.vel.add(this.acc);
+       this.pos.add(this.vel);
+       this.acc.set(0, 0);
+     }
+
+     this.display = function() {
+       drawPile()
+         push();
+         arc(this.x,this.y,)
+         pop();
+     }
+
+     this.edges = function() {
+        if (this.pos.x >= character.pos.x) {
+         ground = 420;
+       }
+     else if (this.pos.x < character.pos.x) {
+       ground = 420;
+     }
+     }
+      }
 
 class floor{
 
@@ -386,6 +392,34 @@ class Background{
     ellipse(this.x-10,170,145,125); //Second from left poof
   }
 
+  drawStump(){
+    push();
+    fill(125,95,50);
+    noStroke();
+    triangle(this.x+90,this.y+400,this.x+110,this.y+400,this.x+125,this.y+350);
+    triangle(this.x+210,this.y+400,this.x+190,this.y+400,this.x+178,this.y+350);
+    quad(this.x+110,this.y+400,this.x+190,this.y+400,this.x+190,this.y+350,this.x+110,this.y+350);
+    stroke(0);
+    fill(205,185,144);
+    ellipse(this.x+150,this.y+350,80,30);
+    noFill();
+    beginShape();
+    curveVertex(this.x+50,this.y+400);
+    curveVertex(this.x+90,this.y+400);
+    curveVertex(this.x+105,this.y+380);
+    curveVertex(this.x+110,this.y+350);
+    curveVertex(this.x+120,this.y+285);
+    endShape();
+    beginShape();
+    curveVertex(this.x+250,this.y+400);
+    curveVertex(this.x+210,this.y+400);
+    curveVertex(this.x+195,this.y+380);
+    curveVertex(this.x+190,this.y+350);
+    curveVertex(this.x+175,this.y+285);
+    endShape();
+    pop();
+  }
+
   moveforward(){
     if (keyIsDown(RIGHT_ARROW)){
       this.x = this.x-this.speed;
@@ -456,50 +490,6 @@ class Background{
         textSize(100);
         text('YOU WIN', 500, 100);
       }
-    }
-
-  }
-
-  class Obstacle {
-
-    constructor(x,y,speed){
-      this.x = x;
-        this.y = y;
-          this.speed = speed;
-    }
-
-    drawStump(){
-      push();
-      fill(125,95,50);
-      noStroke();
-      triangle(this.x+40,this.y,this.x+60,this.y,this.x+75,this.y-50);
-      triangle(this.x+160,this.y,this.x+140,this.y,this.x+128,this.y-50);
-      quad(this.x+60,this.y,this.x+140,this.y,this.x+140,this.y-50,this.x+60,this.y-50);
-      stroke(0);
-      fill(205,185,144);
-      ellipse(this.x+100,this.y-50,80,30);
-      noFill();
-      beginShape();
-      curveVertex(this.x,this.y);
-      curveVertex(this.x+40,this.y);
-      curveVertex(this.x+55,this.y-20);
-      curveVertex(this.x+60,this.y-50);
-      curveVertex(this.x+70,this.y-115);
-      endShape();
-      beginShape();
-      curveVertex(this.x+200,this.y);
-      curveVertex(this.x+160,this.y);
-      curveVertex(this.x+145,this.y-20);
-      curveVertex(this.x+140,this.y-50);
-      curveVertex(this.x+125,this.y-115);
-      endShape();
-      pop();
-    }
-
-    drawPile(){
-      push();
-      arc(this.x,this.y,)
-      pop();
     }
 
   }
