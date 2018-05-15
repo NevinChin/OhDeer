@@ -8,6 +8,7 @@ let character;
 let dog;
 let x = 0;
 let ground;
+let obstacle;
 
 function preload() {
   dog = loadImage('corgi-test.jpg')
@@ -24,6 +25,7 @@ function setup() {
   fill(0);
   character = new Corgi(0, height-70, 10);
   obstacle = new Obstacle();
+
 }
 
 function keyPressed() {
@@ -65,7 +67,9 @@ console.log(frameCount);
   character.update();
   character.display();
   character.edges();
+  push();
   obstacle.edges();
+  pop();
   push();
   if (frameCount % 8 == 0) {
       let s = new Snow(random(0,width),0,3);
@@ -76,6 +80,7 @@ console.log(frameCount);
   	 	      flakes[i].drawFlake();
          	  flakes[i].moveFlake();
   	  }
+
   pop();
   fill(130,120,90);
   rect(0,495,width,height);
@@ -146,19 +151,22 @@ function Corgi(x, y) {
      }
 
      this.display = function() {
-       drawPile()
+       drawStump();
          push();
          arc(this.x,this.y,)
          pop();
      }
 
      this.edges = function() {
-        if (this.pos.x >= character.pos.x) {
+       if (this.pos.x < 10) {
+        ground = 420;
+      }
+        if (this.pos.x <= 10) {
+          ground = 320;
+        }
+       else if (this.pos.x < 0) {
          ground = 420;
        }
-     else if (this.pos.x < character.pos.x) {
-       ground = 420;
-     }
      }
       }
 
