@@ -8,7 +8,7 @@ let character;
 let dog;
 let x = 0;
 let ground;
-let poof;
+let poof = [];
 let won = false;
 
 function preload() {
@@ -22,10 +22,8 @@ function setup() {
   chase = new Deer(2000,400,3);
   words = new Instructions(25,620);
   block = new Obstacle(1000,495,5);
-  poof = new Movement(50,475,5);
   frameRate(240);
   fill(0);
-  character = new Corgi(0, height-70, 10);
 }
 
 function keyPressed() {
@@ -43,7 +41,7 @@ function draw() {
   background(189,251,255);
 
 //-character.pos.x makes the background move and the character stay in the same position
-  // translate(-character.pos.x+50, 0); //changes the origin point of the screen (helpful for moving games)
+   translate(-character.pos.x+50, 0); //changes the origin point of the screen (helpful for moving games)
 //  using a keyPressed function, you can implement different ways for the character to move
 
 let gravity = createVector(0, 0.5);
@@ -84,11 +82,19 @@ let gravity = createVector(0, 0.5);
          	  flakes[i].moveFlake();
   	  }
   pop();
+  push();
+  if (frameCount % 8 == 0) {
+      let d = new Movement(60,483,5);
+      poof.push(d);
+    }
+    for (let i = 0; i < poof.length; i++) {
+  	 	      poof[i].dust();
+  	  }
+  pop();
   fill(130,120,90);
   rect(0,495,width,height);
   fill(255);
   rect(-5,495,1450,45);
-  poof.dust();
   words.beginning();
   words.chase();
   push();
@@ -527,6 +533,7 @@ class Background{
     }
 
     dust(){
+      if (keyIsDown(RIGHT_ARROW)){
       push();
       fill(255);
       arc(this.x+7,this.y+2,25,25,0,PI+QUARTER_PI,OPEN);
@@ -534,6 +541,7 @@ class Background{
       arc(this.x+12,this.y+3,15,15,PI,0,OPEN);
       arc(this.x-9,this.y+6,12,12,0,PI+QUARTER_PI,OPEN);
       pop();
+      }
     }
 
   }
