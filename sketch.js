@@ -20,8 +20,9 @@ function setup() {
   ground = 420
   bump = new floor(150,100,75,50,2.5);
   chase = new Deer(2000,400,3);
-  words = new Instructions(25,620);
+  words = new Instructions(-25,620);
   block = new Obstacle(1000,495,5);
+  character = new Corgi(0,ground);
   frameRate(240);
   fill(0);
 }
@@ -92,9 +93,9 @@ let gravity = createVector(0, 0.5);
   	  }
   pop();
   fill(130,120,90);
-  rect(0,495,width,height);
+  rect(-55,495,1450,height);
   fill(255);
-  rect(-5,495,1450,45);
+  rect(-55,495,1450,45);
   words.beginning();
   words.chase();
   push();
@@ -178,8 +179,8 @@ this.move = move;
 }
 
 drawfloor(){
-  arc(25,530,this.w,this.h,0,PI,OPEN);
-  arc(138,530,this.a,this.b,0,PI,OPEN);
+  arc(-25,530,this.w,this.h,0,PI,OPEN);
+  arc(88,530,this.a,this.b,0,PI,OPEN);
 }
 
 movingRight(){
