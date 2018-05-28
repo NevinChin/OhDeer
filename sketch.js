@@ -1,6 +1,6 @@
 let bump;
-let sphere;
 let chase;
+let words;
 let block;
 let stage = [];
 let flakes = [];
@@ -8,21 +8,23 @@ let character;
 let dog;
 let x = 0;
 let ground;
+let poof = [];
+let won = false;
 
 function preload() {
   dog = loadImage('corgi-test.jpg')
 }
 
 function setup() {
-  createCanvas(1450,750);
+  createCanvas(1440,750);
   ground = 420
   bump = new floor(150,100,75,50,2.5);
-  sphere = new ball(100,450,5);
   chase = new Deer(2000,400,3);
+  words = new Instructions(-25,620);
   block = new Obstacle(1000,495,5);
+  character = new Corgi(0,ground);
   frameRate(240);
   fill(0);
-  character = new Corgi(0, height-70, 10);
 }
 
 function keyPressed() {
@@ -33,17 +35,17 @@ function keyPressed() {
 }
 
 function draw() {
+  if (won==false){
   //creates character on screen
+  print("character"+character.x);
+  print("chase"+chase.x);
   background(189,251,255);
 
 //-character.pos.x makes the background move and the character stay in the same position
-  // translate(-character.pos.x+50, 0); //changes the origin point of the screen (helpful for moving games)
+   translate(-character.pos.x+50, 0); //changes the origin point of the screen (helpful for moving games)
 //  using a keyPressed function, you can implement different ways for the character to move
 
-//create obstacle for character to jump over
-// obstacles(150, 20);
-let gravity = createVector(0, 0.3);
-console.log(frameCount);
+let gravity = createVector(0, 0.5);
   noStroke();
   stroke(0);
   strokeWeight(5);
@@ -51,18 +53,18 @@ console.log(frameCount);
   push();
   block.drawStump();
   block.ApproachingObstacle();
+
   if (keyIsDown(RIGHT_ARROW)){
     if (frameCount % 250 == 0) {
       let b = new Background(1600,100,10,0.75,1);
       stage.push(b);
-      console.log(stage);
       }
     }
-    for (let i = 0; i < stage.length; i++) {
+  for (let i = 0; i < stage.length; i++) {
           stage[i].drawboulder();
           stage[i].drawtree();
           stage[i].moveforward();
-    }
+  }
   pop();
   fill(255);
   chase.drawDeer();
@@ -75,29 +77,39 @@ console.log(frameCount);
   if (frameCount % 8 == 0) {
       let s = new Snow(random(0,width),0,3);
       flakes.push(s);
-      console.log(flakes);
     }
     for (let i = 0; i < flakes.length; i++) {
   	 	      flakes[i].drawFlake();
          	  flakes[i].moveFlake();
   	  }
   pop();
+  push();
+  if (frameCount % 8 == 0) {
+      let d = new Movement(60,483,5);
+      poof.push(d);
+    }
+    for (let i = 0; i < poof.length; i++) {
+  	 	      poof[i].dust();
+  	  }
+  pop();
   fill(130,120,90);
-  rect(0,495,width,height);
+  rect(-55,495,1450,height);
   fill(255);
-  rect(0,495,width,45);
-  for(let i=0; i<7; i++){
+  rect(-55,495,1450,45);
+  words.beginning();
+  words.chase();
+  push();
+for(let i=0; i<7; i++){
   bump.drawfloor();
   translate(225,0);
 }
-bump.movingRight();
-bump.movingLeft();
-bump.switchdirection();
-bump.switchback();
-sphere.bounce();
-sphere.boing();
-sphere.boop();
-chase.catchDeer();
+  pop();
+  chase.catchDeer();
+  bump.movingRight();
+  bump.movingLeft();
+  bump.switchdirection();
+  bump.switchback();
+  }
 }
 
 // Daniel Shiffman
@@ -167,11 +179,9 @@ this.move = move;
 }
 
 drawfloor(){
-  arc(25,530,this.w,this.h,0,PI,OPEN);
-  arc(138,530,this.a,this.b,0,PI,OPEN);
+  arc(-25,530,this.w,this.h,0,PI,OPEN);
+  arc(88,530,this.a,this.b,0,PI,OPEN);
 }
-
-
 
 movingRight(){
   if (keyIsDown(RIGHT_ARROW)){
@@ -198,55 +208,17 @@ movingLeft(){
 switchdirection(){
   if (this.h<=75){
     this.move=-this.move;
-    print(this.move);
   }
 }
 
 switchback(){
   if (this.h>100){
     this.move=-this.move;
-    print(this.move);
+    }
   }
 }
 
-}
 
-class ball{
-
-  constructor (x,y,speed){
-    this.x = x;
-    this.y = y;
-    this.speed = speed;
-  }
-
-  drawball(){
-    ellipse(this.x,this.y, 50,50);
-  }
-
-  bounce(){
-    if (keyIsDown(RIGHT_ARROW)){
-      this.y = this.y+this.speed;
-    }
-    if (keyIsDown(LEFT_ARROW)){
-      this.y = this.y+this.speed;
-    }
-  }
-
-  boing(){
-    if (this.y>=470){
-      this.speed=-this.speed;
-      print(this.speed);
-    }
-  }
-
-  boop(){
-    if (this.y<420){
-      this.speed=-this.speed;
-      print(this.speed);
-    }
-  }
-
-}
 
 class Background{
 
@@ -446,15 +418,19 @@ class Background{
           this.x = this.x - this.speed;
         }
       }
+      if (keyIsDown(LEFT_ARROW)){
+        this.x = this.x+this.speed;
+      }
     }
 
     catchDeer(){
-      if (this.x <= sphere.x){
-        background(0);
-        fill(255);
-        stroke(255);
+      if (this.x <= 0){
+        background(255);
+        fill(0);
+        stroke(0);
         textSize(100);
-        text('YOU WIN', 500, 100);
+        text('YOU WIN', 500, 300);
+        print('YOU WIN');
       }
     }
 
@@ -511,3 +487,62 @@ class Background{
     }
   }
     }
+
+  class Instructions{
+
+    constructor(x,y){
+      this.x = x;
+        this.y = y;
+    }
+
+      beginning(){
+        if (chase.x>=1000){
+        push();
+        strokeWeight(5);
+        textFont('Courier New');
+        textSize(32);
+        textStyle(BOLD);
+        fill(255);
+        text('Instructions~',this.x+25,this.y);
+        text('Objective: Catch the deer!',this.x+25,this.y+50);
+        text('Controls: Right --> = Move Forward, Left --> = Move Back, Space = Jump',this.x+25,this.y+100)
+        pop();
+      }
+    }
+
+      chase(){
+        if (chase.x<1000){
+          push();
+          strokeWeight(5);
+          textFont('Courier New');
+          textSize(42);
+          textStyle(BOLD);
+          fill(255);
+          text('CATCH THE DEER!(Press Shift for a temporary speed boost)',this.x,this.y+50);
+          pop();
+        }
+      }
+
+  }
+
+  class Movement{
+
+    constructor(x,y,speed){
+      this.x = x;
+        this.y = y;
+          this.speed = speed;
+    }
+
+    dust(){
+      if (keyIsDown(RIGHT_ARROW)){
+      push();
+      fill(255);
+      arc(this.x+7,this.y+2,25,25,0,PI+QUARTER_PI,OPEN);
+      arc(this.x,this.y,25,25,HALF_PI,0,OPEN);
+      arc(this.x+12,this.y+3,15,15,PI,0,OPEN);
+      arc(this.x-9,this.y+6,12,12,0,PI+QUARTER_PI,OPEN);
+      pop();
+      }
+    }
+
+  }
