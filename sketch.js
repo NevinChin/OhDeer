@@ -22,20 +22,19 @@ function setup() {
   chase = new Deer(2000,400,3);
   words = new Instructions(-25,620);
   block = new Obstacle(1000,495,5);
-  character = new Corgi(0,ground);
+  character = new Corgi(0, ground);
   frameRate(240);
   fill(0);
 }
 
 function keyPressed() {
   if (key == ' ') {
-    let jump = createVector(0, -7);
+    let jump = createVector(0, -10);
     character.applyForce(jump);
   }
 }
 
 function draw() {
-  if (won==false){
   //creates character on screen
   print("character"+character.x);
   print("chase"+chase.x);
@@ -84,12 +83,13 @@ let gravity = createVector(0, 0.5);
   	  }
   pop();
   push();
-  if (frameCount % 8 == 0) {
-      let d = new Movement(60,483,5);
+  if (frameCount % 5 == 0) {
+      let d = new Movement(random(10,75),480,0.5);
       poof.push(d);
     }
     for (let i = 0; i < poof.length; i++) {
   	 	      poof[i].dust();
+            poof[i].settleDown();
   	  }
   pop();
   fill(130,120,90);
@@ -109,7 +109,6 @@ for(let i=0; i<7; i++){
   bump.movingLeft();
   bump.switchdirection();
   bump.switchback();
-  }
 }
 
 // Daniel Shiffman
@@ -157,16 +156,6 @@ function Corgi(x, y) {
   }
   }
    }
-
-
-
-// function obstacles(obstacleWidth, obstacleHeight) {
-//   //https://www.youtube.com/watch?v=cXgA1d_E-jY
-//   fill(80);
-//   rect(540, 260, obstacleWidth, obstacleHeight);
-//   rect(720, 150, obstacleWidth, obstacleHeight);
-//   rect(900, 300, obstacleWidth, obstacleHeight);
-// }
 
 class floor{
 
@@ -410,27 +399,33 @@ class Background{
 
     runDeer(){
       if (keyIsDown(RIGHT_ARROW)){
-        if (this.x <= 1000);
-          if (keyIsDown(SHIFT)){
-            this.x = this.x - 2*this.speed;
-          }
-        else{
-          this.x = this.x - this.speed;
-        }
+        this.x = this.x - this.speed;
+        print('RIGHT_ARROW');
       }
+       if (this.x < 1000){
+           if (keyIsDown(SHIFT)){
+             print('SHIFT');;
+             this.x = this.x - 6;
+           }
+         }
       if (keyIsDown(LEFT_ARROW)){
+        if (won == false){
         this.x = this.x+this.speed;
+        }
       }
     }
 
     catchDeer(){
       if (this.x <= 0){
-        background(255);
-        fill(0);
-        stroke(0);
-        textSize(100);
-        text('YOU WIN', 500, 300);
-        print('YOU WIN');
+        won = true;
+          if(won == true){
+            background(255);
+            fill(0);
+          stroke(0);
+          textSize(100);
+          text('YOU WIN', 500, 300);
+          print('YOU WIN');
+        }
       }
     }
 
@@ -469,12 +464,6 @@ class Background{
       curveVertex(this.x+140,this.y-50);
       curveVertex(this.x+125,this.y-115);
       endShape();
-      pop();
-    }
-
-    drawPile(){
-      push();
-      arc(this.x,this.y,)
       pop();
     }
 
@@ -535,14 +524,31 @@ class Background{
 
     dust(){
       if (keyIsDown(RIGHT_ARROW)){
-      push();
-      fill(255);
-      arc(this.x+7,this.y+2,25,25,0,PI+QUARTER_PI,OPEN);
-      arc(this.x,this.y,25,25,HALF_PI,0,OPEN);
-      arc(this.x+12,this.y+3,15,15,PI,0,OPEN);
-      arc(this.x-9,this.y+6,12,12,0,PI+QUARTER_PI,OPEN);
-      pop();
+        if(character.pos.y == 420){
+        push();
+        fill(255);
+        arc(this.x+7,this.y+2,25,25,0,PI+QUARTER_PI,OPEN);
+        arc(this.x,this.y,25,25,HALF_PI,0,OPEN);
+        arc(this.x+12,this.y+3,15,15,PI,0,OPEN);
+        arc(this.x-9,this.y+6,12,12,0,PI+QUARTER_PI,OPEN);
+        pop();
+        }
       }
+      if (keyIsDown(LEFT_ARROW)){
+        if(character.pos.y == 420){
+        push();
+        fill(255);
+        arc(this.x+7,this.y+2,25,25,0,PI+QUARTER_PI,OPEN);
+        arc(this.x,this.y,25,25,HALF_PI,0,OPEN);
+        arc(this.x+12,this.y+3,15,15,PI,0,OPEN);
+        arc(this.x-9,this.y+6,12,12,0,PI+QUARTER_PI,OPEN);
+        pop();
+        }
+      }
+    }
+
+    settleDown(){
+      this.y = this.y+this.speed;
     }
 
   }
